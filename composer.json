@@ -1,0 +1,25 @@
+{
+    "name": "yii2mod/yii2-array-query",
+    "description": "Yii2 component that allows for searching/filtering the elements of an array.",
+    "type": "yii2-extension",
+    "keywords": [
+        "yii2",
+        "yii2 array query",
+        "yii2 array search"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Igor Chepurnoy",
+            "email": "igorzfort@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "yii2mod\\query\\": ""
+        }
+    }
+}
