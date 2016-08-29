@@ -53,3 +53,47 @@ $query->where(['username' => 'admin']);
 
 $rows = $query->all();
 ```
+
+Using with ArrayDataProvider
+----------------------------
+
+You may perform filtering using [[\yii2mod\query\ArrayQuery]] class. For example:
+```php
+<?php
+
+// Some search model
+    
+/**
+ * Setup search function for filtering and sorting.
+ * @param $params
+ * @return ArrayDataProvider
+ */
+public function search($params)
+{
+    $models = User::find()->asArray()->all();
+
+    $query = new ArrayQuery();
+    $query->from($models);
+
+    // load the search form data and validate
+    if ($this->load($params) && $this->validate()) {
+        // adjust the query by adding the filters
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['status' => $this->status]);
+        $query->andFilterWhere(['like', 'username', $this->username]);
+        $query->andFilterWhere(['like', 'email', $this->email]);
+    }
+    
+    // prepare the ArrayDataProvider
+    return new ArrayDataProvider([
+        'allModels' => $query->all(),
+        'sort' => [
+            'attributes' => ['id', 'username', 'email', 'status'],
+        ],
+        'pagination' => [
+            'pageSize' => 10
+        ],
+    ]);
+}
+
+```
