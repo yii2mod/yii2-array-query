@@ -6,6 +6,10 @@ use Yii;
 use yii\base\Component;
 use yii\db\QueryTrait;
 
+/**
+ * Class ArrayQuery
+ * @package yii2mod\query
+ */
 class ArrayQuery extends Component
 {
     use QueryTrait;
@@ -23,7 +27,7 @@ class ArrayQuery extends Component
     /**
      * @var string the class for processing the queries
      */
-    public $queryProcessorClass = 'app\components\QueryProcessor';
+    public $queryProcessorClass = 'yii2mod\query\QueryProcessor';
 
     /**
      * @var QueryProcessor

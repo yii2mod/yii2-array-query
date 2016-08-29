@@ -37,8 +37,8 @@ $data = [
     ],
     [
         'id' => 2,
-        'name' => 'test',
-        'username' => 'test@example.com'
+        'username' => 'test',
+        'email' => 'test@example.com'
     ],
 ];
 
