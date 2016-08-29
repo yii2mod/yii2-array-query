@@ -4,6 +4,9 @@ ArrayQuery Component for Yii2
 Allows searching/filtering of an array. This component is very useful when displaying array data in GridViews with an
 ArrayDataProvider.
 
+[![Latest Stable Version](https://poser.pugx.org/yii2mod/yii2-array-query/v/stable)](https://packagist.org/packages/yii2mod/yii2-array-query)
+[![Total Downloads](https://poser.pugx.org/yii2mod/yii2-array-query/downloads)](https://packagist.org/packages/yii2mod/yii2-array-query)
+[![License](https://poser.pugx.org/yii2mod/yii2-array-query/license)](https://packagist.org/packages/yii2mod/yii2-array-query)
 [![Build Status](https://travis-ci.org/yii2mod/yii2-array-query.svg?branch=master)](https://travis-ci.org/yii2mod/yii2-array-query)
 
 Installation
