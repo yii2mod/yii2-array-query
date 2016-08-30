@@ -86,7 +86,7 @@ public function search($params)
     
     // prepare the ArrayDataProvider
     return new ArrayDataProvider([
-        'allModels' => $query->all(),
+        'allModels' => $query->indexBy('id')->all(),
         'sort' => [
             'attributes' => ['id', 'username', 'email', 'status'],
         ],
