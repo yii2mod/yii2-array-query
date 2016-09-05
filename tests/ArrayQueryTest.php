@@ -242,6 +242,5 @@ class ArrayQueryTest extends TestCase
 
         $this->assertCount(2, $rows);
         $this->assertEquals('username', $query->primaryKeyName);
-
     }
 }
