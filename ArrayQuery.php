@@ -32,14 +32,14 @@ class ArrayQuery extends Component
     /**
      * @var QueryProcessor
      */
-    protected $queryProcessor;
+    private $_queryProcessor;
 
     /**
      * @inheritdoc
      */
     public function init()
     {
-        $this->queryProcessor = Yii::createObject($this->queryProcessorClass);
+        $this->_queryProcessor = Yii::createObject($this->queryProcessorClass);
 
         parent::init();
     }
@@ -112,7 +112,7 @@ class ArrayQuery extends Component
      */
     protected function fetchData()
     {
-        return $this->queryProcessor->process($this);
+        return $this->_queryProcessor->process($this);
     }
 
     /**
