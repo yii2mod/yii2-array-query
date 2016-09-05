@@ -56,6 +56,17 @@ class ArrayQueryTest extends TestCase
         $this->assertEquals('test', $rows[0]['username']);
     }
 
+    public function testNotLikeCondition()
+    {
+        $query = new ArrayQuery();
+        $query->from($this->getTestData());
+        $query->where(['not like', 'username', 'admin']);
+
+        $rows = $query->all();
+        $this->assertEquals('guest', $rows[1]['username']);
+        $this->assertCount(2, $rows);
+    }
+
     public function testApplyLimit()
     {
         $query = new ArrayQuery();
@@ -133,5 +144,114 @@ class ArrayQueryTest extends TestCase
         $query->where(['username' => 'admin']);
 
         $this->assertTrue($query->exists());
+    }
+
+    public function testOrderByASC()
+    {
+        $query = new ArrayQuery();
+        $query->from($this->getTestData());
+        $query->orderBy('email');
+
+        $rows = $query->all();
+        $this->assertEquals('admin', $rows[0]['username']);
+    }
+
+    public function testOrderByDESC()
+    {
+        $query = new ArrayQuery();
+        $query->from($this->getTestData());
+        $query->orderBy(['email' => SORT_DESC]);
+
+        $rows = $query->all();
+        $this->assertEquals('test', $rows[0]['username']);
+    }
+
+    public function testFilterWhereCondition()
+    {
+        $query = (new ArrayQuery())->from($this->getTestData());
+        $query->filterWhere(['username' => 'admin']);
+        $rows = $query->all();
+
+        $this->assertEquals('admin', $rows[0]['username']);
+        $this->assertCount(1, $rows);
+    }
+
+    public function testFilterAndCondition()
+    {
+        $query = (new ArrayQuery())->from($this->getTestData());
+        $query->filterWhere(['username' => 'guest']);
+        $query->andFilterWhere(['email' => 'guest@example.com']);
+        $rows = $query->all();
+
+        $this->assertEquals('guest', $rows[0]['username']);
+        $this->assertCount(1, $rows);
+    }
+
+    public function testFilterOrCondition()
+    {
+        $query = (new ArrayQuery())->from($this->getTestData());
+        $query->filterWhere(['username' => 'guest']);
+        $query->orFilterWhere(['username' => 'admin']);
+        $rows = $query->all();
+
+        $this->assertEquals('guest', $rows[0]['username']);
+        $this->assertEquals('admin', $rows[1]['username']);
+        $this->assertCount(2, $rows);
+    }
+
+    public function testFilterNotCondition()
+    {
+        $query = (new ArrayQuery())->from($this->getTestData());
+        $query->filterWhere(['not', ['username' => 'guest']]);
+        $rows = $query->all();
+
+        $this->assertEquals('admin', $rows[0]['username']);
+        $this->assertEquals('test', $rows[1]['username']);
+        $this->assertCount(2, $rows);
+    }
+
+    public function testFilterBetweenCondition()
+    {
+        $query = (new ArrayQuery())->from($this->getTestData());
+        $query->filterWhere(['between', 'id', 2, 3]);
+        $rows = $query->all();
+
+        $this->assertEquals('test', $rows[0]['username']);
+        $this->assertEquals('guest', $rows[1]['username']);
+        $this->assertCount(2, $rows);
+    }
+
+    public function testFilterInCondition()
+    {
+        $query = (new ArrayQuery())->from($this->getTestData());
+        $query->filterWhere(['in', 'id', [1, 2, 3]]);
+        $rows = $query->all();
+
+        $this->assertEquals('admin', $rows[0]['username']);
+        $this->assertEquals('test', $rows[1]['username']);
+        $this->assertEquals('guest', $rows[2]['username']);
+        $this->assertCount(3, $rows);
+    }
+
+    public function testFilterLikeCondition()
+    {
+        $query = (new ArrayQuery())->from($this->getTestData());
+        $query->filterWhere(['like', 'username', 'gu']);
+        $query->orFilterWhere(['like', 'username', 'ad']);
+        $rows = $query->all();
+
+
+        $this->assertEquals('guest', $rows[0]['username']);
+        $this->assertEquals('admin', $rows[1]['username']);
+        $this->assertCount(2, $rows);
+    }
+
+    public function testSetCustomPrimaryKey()
+    {
+        $query = (new ArrayQuery(['primaryKeyName' => 'username']))->from($this->getTestData());
+        $query->where(['not', ['username' => 'admin']]);
+        $rows = $query->all();
+
+        $this->assertCount(2, $rows);
     }
 }
