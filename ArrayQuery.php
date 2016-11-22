@@ -8,6 +8,7 @@ use yii\db\QueryTrait;
 
 /**
  * Class ArrayQuery
+ *
  * @package yii2mod\query
  */
 class ArrayQuery extends Component
@@ -15,12 +16,12 @@ class ArrayQuery extends Component
     use QueryTrait;
 
     /**
-     * @var string name of the data key, which should be used as row unique id - primary key.
+     * @var string name of the data key, which should be used as row unique id - primary key
      */
     public $primaryKeyName = 'id';
 
     /**
-     * @var array the data to search, filter.
+     * @var array the data to search, filter
      */
     public $from;
 
@@ -39,9 +40,9 @@ class ArrayQuery extends Component
      */
     public function init()
     {
-        $this->_queryProcessor = Yii::createObject($this->queryProcessorClass);
-
         parent::init();
+
+        $this->_queryProcessor = Yii::createObject($this->queryProcessorClass);
     }
 
     /**
@@ -96,6 +97,7 @@ class ArrayQuery extends Component
      * Sets data to be selected from.
      *
      * @param array $data
+     *
      * @return $this
      */
     public function from(array $data)
@@ -119,6 +121,7 @@ class ArrayQuery extends Component
      * Converts the raw query results into the format as specified by this query.
      *
      * @param $rows
+     *
      * @return array
      */
     public function populate($rows)

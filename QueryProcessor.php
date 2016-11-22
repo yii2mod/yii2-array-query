@@ -1,6 +1,7 @@
 <?php
 /**
  * @link https://github.com/yii2tech
+ *
  * @copyright Copyright (c) 2015 Yii2tech
  * @license [New BSD License](http://www.opensource.org/licenses/bsd-license.php)
  */
@@ -19,6 +20,7 @@ use yii\helpers\ArrayHelper;
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @author Igor Chepurnoy <igorzfort@gmail.com>
+ *
  * @since 1.0
  */
 class QueryProcessor extends Component
@@ -65,10 +67,10 @@ class QueryProcessor extends Component
     /**
      * Applies sort for given data.
      *
-     * @param array $data raw data.
-     * @param array|null $orderBy order by.
+     * @param array $data raw data
+     * @param array|null $orderBy order by
      *
-     * @return array sorted data.
+     * @return array sorted data
      */
     protected function applyOrderBy(array $data, $orderBy)
     {
@@ -82,11 +84,11 @@ class QueryProcessor extends Component
     /**
      * Applies limit and offset for given data.
      *
-     * @param array $data raw data.
-     * @param integer|null $limit limit value.
-     * @param integer|null $offset offset value.
+     * @param array $data raw data
+     * @param int|null $limit limit value
+     * @param int|null $offset offset value
      *
-     * @return array data.
+     * @return array data
      */
     protected function applyLimit(array $data, $limit, $offset)
     {
@@ -108,10 +110,10 @@ class QueryProcessor extends Component
     /**
      * Applies where conditions.
      *
-     * @param array $data raw data.
-     * @param array|null $where where conditions.
+     * @param array $data raw data
+     * @param array|null $where where conditions
      *
-     * @return array data.
+     * @return array data
      */
     protected function applyWhere(array $data, $where)
     {
@@ -121,10 +123,10 @@ class QueryProcessor extends Component
     /**
      * Applies filter conditions.
      *
-     * @param array $data data to be filtered.
-     * @param array $condition filter condition.
+     * @param array $data data to be filtered
+     * @param array $condition filter condition
      *
-     * @return array filtered data.
+     * @return array filtered data
      *
      * @throws InvalidParamException
      */
@@ -146,6 +148,7 @@ class QueryProcessor extends Component
                 throw new InvalidParamException("Invalid condition filter '{$operator}'");
             }
             array_shift($condition);
+
             return $this->$method($data, $operator, $condition);
         } else {
             return $this->filterHashCondition($data, $condition);
@@ -156,7 +159,7 @@ class QueryProcessor extends Component
      * Applies a condition based on column-value pairs.
      *
      * @param array $data data to be filtered
-     * @param array $condition the condition specification.
+     * @param array $condition the condition specification
      *
      * @return array filtered data
      */
@@ -167,7 +170,7 @@ class QueryProcessor extends Component
                 $data = $this->filterInCondition($data, 'IN', [$column, $value]);
             } else {
                 $data = array_filter($data, function ($row) use ($column, $value) {
-                    return ($row[$column] == $value);
+                    return $row[$column] == $value;
                 });
             }
         }
@@ -179,8 +182,8 @@ class QueryProcessor extends Component
      * Applies 2 or more conditions using 'AND' logic.
      *
      * @param array $data data to be filtered
-     * @param string $operator operator.
-     * @param array $operands conditions to be united.
+     * @param string $operator operator
+     * @param array $operands conditions to be united
      *
      * @return array filtered data
      */
@@ -198,9 +201,9 @@ class QueryProcessor extends Component
     /**
      * Applies 2 or more conditions using 'OR' logic.
      *
-     * @param array $data data to be filtered.
-     * @param string $operator operator.
-     * @param array $operands conditions to be united.
+     * @param array $data data to be filtered
+     * @param string $operator operator
+     * @param array $operands conditions to be united
      *
      * @return array filtered data
      */
@@ -231,13 +234,13 @@ class QueryProcessor extends Component
     /**
      * Inverts a filter condition.
      *
-     * @param array $data data to be filtered.
-     * @param string $operator operator.
-     * @param array $operands operands to be inverted.
+     * @param array $data data to be filtered
+     * @param string $operator operator
+     * @param array $operands operands to be inverted
      *
-     * @return array filtered data.
+     * @return array filtered data
      *
-     * @throws InvalidParamException if wrong number of operands have been given.
+     * @throws InvalidParamException if wrong number of operands have been given
      */
     protected function filterNotCondition(array $data, $operator, $operands)
     {
@@ -268,14 +271,14 @@ class QueryProcessor extends Component
     /**
      * Applies `BETWEEN` condition.
      *
-     * @param array $data data to be filtered.
-     * @param string $operator operator.
+     * @param array $data data to be filtered
+     * @param string $operator operator
      * @param array $operands the first operand is the column name. The second and third operands
-     * describe the interval that column value should be in.
+     * describe the interval that column value should be in
      *
-     * @return array filtered data.
+     * @return array filtered data
      *
-     * @throws InvalidParamException if wrong number of operands have been given.
+     * @throws InvalidParamException if wrong number of operands have been given
      */
     protected function filterBetweenCondition(array $data, $operator, $operands)
     {
@@ -287,26 +290,26 @@ class QueryProcessor extends Component
 
         if (strncmp('NOT', $operator, 3) === 0) {
             return array_filter($data, function ($row) use ($column, $value1, $value2) {
-                return ($row[$column] < $value1 || $row[$column] > $value2);
+                return $row[$column] < $value1 || $row[$column] > $value2;
             });
         }
 
         return array_filter($data, function ($row) use ($column, $value1, $value2) {
-            return ($row[$column] >= $value1 && $row[$column] <= $value2);
+            return $row[$column] >= $value1 && $row[$column] <= $value2;
         });
     }
 
     /**
      * Applies 'IN' condition.
      *
-     * @param array $data data to be filtered.
-     * @param string $operator operator.
+     * @param array $data data to be filtered
+     * @param string $operator operator
      * @param array $operands the first operand is the column name.
-     * The second operand is an array of values that column value should be among.
+     * The second operand is an array of values that column value should be among
      *
-     * @return array filtered data.
+     * @return array filtered data
      *
-     * @throws InvalidParamException if wrong number of operands have been given.
+     * @throws InvalidParamException if wrong number of operands have been given
      */
     protected function filterInCondition(array $data, $operator, $operands)
     {
@@ -350,14 +353,14 @@ class QueryProcessor extends Component
     /**
      * Applies 'LIKE' condition.
      *
-     * @param array $data data to be filtered.
-     * @param string $operator operator.
+     * @param array $data data to be filtered
+     * @param string $operator operator
      * @param array $operands the first operand is the column name. The second operand is a single value
-     * or an array of values that column value should be compared with.
+     * or an array of values that column value should be compared with
      *
-     * @return array filtered data.
+     * @return array filtered data
      *
-     * @throws InvalidParamException if wrong number of operands have been given.
+     * @throws InvalidParamException if wrong number of operands have been given
      */
     protected function filterLikeCondition(array $data, $operator, $operands)
     {
@@ -386,6 +389,7 @@ class QueryProcessor extends Component
                             return true;
                         }
                     }
+
                     return false;
                 });
             }
@@ -396,6 +400,7 @@ class QueryProcessor extends Component
                         return false;
                     }
                 }
+
                 return true;
             });
         }
@@ -411,6 +416,7 @@ class QueryProcessor extends Component
                         return true;
                     }
                 }
+
                 return false;
             });
         }
@@ -421,6 +427,7 @@ class QueryProcessor extends Component
                     return false;
                 }
             }
+
             return true;
         });
     }

@@ -6,13 +6,15 @@ use yii2mod\query\ArrayQuery;
 
 /**
  * Class ArrayQueryTest
+ *
  * @package yii2mod\query\tests
  */
 class ArrayQueryTest extends TestCase
 {
     /**
      * @param array $config
-     * @return ArrayQuery array query instance.
+     *
+     * @return ArrayQuery array query instance
      */
     protected function createArrayQuery($config = [])
     {
@@ -25,12 +27,12 @@ class ArrayQueryTest extends TestCase
             [
                 'id' => 2,
                 'username' => 'test',
-                'email' => 'test@example.com'
+                'email' => 'test@example.com',
             ],
             [
                 'id' => 3,
                 'username' => 'guest',
-                'email' => 'guest@example.com'
+                'email' => 'guest@example.com',
             ],
         ]);
     }

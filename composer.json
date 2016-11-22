@@ -17,6 +17,9 @@
     "require": {
         "yiisoft/yii2": "*"
     },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "~1.7"
+    },
     "autoload": {
         "psr-4": {
             "yii2mod\\query\\": ""

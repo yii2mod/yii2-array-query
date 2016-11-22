@@ -2,8 +2,8 @@
 
 namespace yii2mod\query\tests;
 
-use yii\helpers\ArrayHelper;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the base class for all yii framework unit tests.
@@ -24,6 +24,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * Populates Yii::$app with a new application
      * The application will be destroyed on tearDown() automatically.
+     *
      * @param array $config The application configuration, if needed
      * @param string $appClass name of the application class to create
      */
@@ -32,7 +33,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         new $appClass(ArrayHelper::merge([
             'id' => 'testapp',
             'basePath' => __DIR__,
-            'vendorPath' => $this->getVendorPath()
+            'vendorPath' => $this->getVendorPath(),
         ], $config));
     }
 
