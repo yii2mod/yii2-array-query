@@ -1,5 +1,10 @@
-ArrayQuery Component for Yii2
-=============================
+<p align="center">
+    <a href="https://github.com/yiisoft" target="_blank">
+        <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
+    </a>
+    <h1 align="center">Yii2 ArrayQuery Component</h1>
+    <br>
+</p>
 
 Allows searching/filtering of an array. This component is very useful when displaying array data in GridViews with an
 ArrayDataProvider.
@@ -22,7 +27,7 @@ php composer.phar require --prefer-dist yii2mod/yii2-array-query "*"
 
 or add
 
-```json
+```
 "yii2mod/yii2-array-query": "*"
 ```
 
