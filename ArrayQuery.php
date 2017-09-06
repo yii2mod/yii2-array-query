@@ -38,7 +38,7 @@ class ArrayQuery extends Component
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -50,7 +50,7 @@ class ArrayQuery extends Component
      *
      * @return array
      */
-    public function all()
+    public function all(): array
     {
         $rows = $this->fetchData();
 
@@ -74,7 +74,7 @@ class ArrayQuery extends Component
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         $data = $this->fetchData();
 
@@ -86,7 +86,7 @@ class ArrayQuery extends Component
      *
      * @return bool
      */
-    public function exists()
+    public function exists(): bool
     {
         $data = $this->fetchData();
 
@@ -110,9 +110,9 @@ class ArrayQuery extends Component
     /**
      * Fetches data.
      *
-     * @return mixed
+     * @return array
      */
-    protected function fetchData()
+    protected function fetchData(): array
     {
         return $this->_queryProcessor->process($this);
     }
@@ -124,7 +124,7 @@ class ArrayQuery extends Component
      *
      * @return array
      */
-    public function populate($rows)
+    public function populate($rows): array
     {
         $result = [];
 
