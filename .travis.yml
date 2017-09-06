@@ -7,7 +7,7 @@ php:
 # faster builds on new travis setup not using sudo
 sudo: false
 
-# cache dirs
+# cache vendor dirs
 cache:
   directories:
     - $HOME/.composer/cache

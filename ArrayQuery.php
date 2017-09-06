@@ -38,7 +38,7 @@ class ArrayQuery extends Component
     /**
      * @inheritdoc
      */
-    public function init(): void
+    public function init()
     {
         parent::init();
 
