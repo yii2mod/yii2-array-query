@@ -40,6 +40,7 @@ class QueryProcessor extends Component
         'NOT LIKE' => 'filterLikeCondition',
         'OR LIKE' => 'filterLikeCondition',
         'OR NOT LIKE' => 'filterLikeCondition',
+        'CALLBACK' => 'filterCallbackCondition',
     ];
 
     /**
@@ -50,9 +51,9 @@ class QueryProcessor extends Component
     /**
      * @param ArrayQuery $query
      *
-     * @return array
+     * @return array[]
      */
-    public function process($query): array
+    public function process($query)
     {
         $this->_query = $query;
 
@@ -72,7 +73,7 @@ class QueryProcessor extends Component
      *
      * @return array sorted data
      */
-    protected function applyOrderBy(array $data, $orderBy): array
+    protected function applyOrderBy(array $data, $orderBy)
     {
         if (!empty($orderBy)) {
             ArrayHelper::multisort($data, array_keys($orderBy), array_values($orderBy));
@@ -90,7 +91,7 @@ class QueryProcessor extends Component
      *
      * @return array data
      */
-    protected function applyLimit(array $data, $limit, $offset): array
+    protected function applyLimit(array $data, $limit, $offset)
     {
         if (empty($limit) && empty($offset)) {
             return $data;
@@ -115,7 +116,7 @@ class QueryProcessor extends Component
      *
      * @return array data
      */
-    protected function applyWhere(array $data, $where): array
+    protected function applyWhere(array $data, $where)
     {
         return $this->filterCondition($data, $where);
     }
@@ -130,7 +131,7 @@ class QueryProcessor extends Component
      *
      * @throws InvalidParamException
      */
-    protected function filterCondition(array $data, $condition): array
+    public function filterCondition(array $data, $condition)
     {
         if (empty($condition)) {
             return $data;
@@ -145,12 +146,13 @@ class QueryProcessor extends Component
             if (isset($this->conditionFilters[$operator])) {
                 $method = $this->conditionFilters[$operator];
             } else {
-                throw new InvalidParamException("Invalid condition filter '{$operator}'");
+                $method = 'filterSimpleCondition';
             }
+
             array_shift($condition);
 
             return $this->$method($data, $operator, $condition);
-        } else {
+        } else { // hash format: 'column1' => 'value1', 'column2' => 'value2', ...
             return $this->filterHashCondition($data, $condition);
         }
     }
@@ -163,13 +165,18 @@ class QueryProcessor extends Component
      *
      * @return array filtered data
      */
-    protected function filterHashCondition(array $data, $condition): array
+    public function filterHashCondition(array $data, $condition)
     {
         foreach ($condition as $column => $value) {
             if (is_array($value)) {
+                // IN condition
                 $data = $this->filterInCondition($data, 'IN', [$column, $value]);
             } else {
                 $data = array_filter($data, function ($row) use ($column, $value) {
+                    if ($value instanceof \Closure) {
+                        return call_user_func($value, $row[$column]);
+                    }
+
                     return $row[$column] == $value;
                 });
             }
@@ -187,7 +194,7 @@ class QueryProcessor extends Component
      *
      * @return array filtered data
      */
-    protected function filterAndCondition(array $data, $operator, $operands): array
+    protected function filterAndCondition(array $data, $operator, $operands)
     {
         foreach ($operands as $operand) {
             if (is_array($operand)) {
@@ -207,7 +214,7 @@ class QueryProcessor extends Component
      *
      * @return array filtered data
      */
-    protected function filterOrCondition(array $data, $operator, $operands): array
+    protected function filterOrCondition(array $data, $operator, $operands)
     {
         $parts = [];
         foreach ($operands as $operand) {
@@ -242,7 +249,7 @@ class QueryProcessor extends Component
      *
      * @throws InvalidParamException if wrong number of operands have been given
      */
-    protected function filterNotCondition(array $data, $operator, $operands): array
+    protected function filterNotCondition(array $data, $operator, $operands)
     {
         if (count($operands) != 1) {
             throw new InvalidParamException("Operator '$operator' requires exactly one operand.");
@@ -280,7 +287,7 @@ class QueryProcessor extends Component
      *
      * @throws InvalidParamException if wrong number of operands have been given
      */
-    protected function filterBetweenCondition(array $data, $operator, $operands): array
+    protected function filterBetweenCondition(array $data, $operator, $operands)
     {
         if (!isset($operands[0], $operands[1], $operands[2])) {
             throw new InvalidParamException("Operator '$operator' requires three operands.");
@@ -311,7 +318,7 @@ class QueryProcessor extends Component
      *
      * @throws InvalidParamException if wrong number of operands have been given
      */
-    protected function filterInCondition(array $data, $operator, $operands): array
+    protected function filterInCondition(array $data, $operator, $operands)
     {
         if (!isset($operands[0], $operands[1])) {
             throw new InvalidParamException("Operator '$operator' requires two operands.");
@@ -362,7 +369,7 @@ class QueryProcessor extends Component
      *
      * @throws InvalidParamException if wrong number of operands have been given
      */
-    protected function filterLikeCondition(array $data, $operator, $operands): array
+    protected function filterLikeCondition(array $data, $operator, $operands)
     {
         if (!isset($operands[0], $operands[1])) {
             throw new InvalidParamException("Operator '$operator' requires two operands.");
@@ -429,6 +436,83 @@ class QueryProcessor extends Component
             }
 
             return true;
+        });
+    }
+
+    /**
+     * Applies 'CALLBACK' condition.
+     *
+     * @param array $data data to be filtered
+     * @param string $operator operator
+     * @param array $operands the only one operand is the PHP callback, which should be compatible with
+     * `array_filter()` PHP function, e.g.:
+     *
+     * ```php
+     * function ($row) {
+     *     //return bool whether row matches condition or not
+     * }
+     * ```
+     *
+     * @return array filtered data
+     *
+     * @throws InvalidParamException if wrong number of operands have been given
+     *
+     * @since 1.0.3
+     */
+    public function filterCallbackCondition(array $data, $operator, $operands)
+    {
+        if (count($operands) != 1) {
+            throw new InvalidParamException("Operator '$operator' requires exactly one operand.");
+        }
+
+        $callback = reset($operands);
+
+        return array_filter($data, $callback);
+    }
+
+    /**
+     * Applies comparison condition, e.g. `column operator value`.
+     *
+     * @param array $data data to be filtered
+     * @param string $operator operator
+     * @param array $operands
+     *
+     * @return array filtered data
+     *
+     * @throws InvalidParamException if wrong number of operands have been given or operator is not supported
+     *
+     * @since 1.0.4
+     */
+    public function filterSimpleCondition(array $data, $operator, $operands)
+    {
+        if (count($operands) !== 2) {
+            throw new InvalidParamException("Operator '$operator' requires two operands.");
+        }
+        list($column, $value) = $operands;
+
+        return array_filter($data, function ($row) use ($operator, $column, $value) {
+            switch ($operator) {
+                case '=':
+                case '==':
+                    return $row[$column] == $value;
+                case '===':
+                    return $row[$column] === $value;
+                case '!=':
+                case '<>':
+                    return $row[$column] != $value;
+                case '!==':
+                    return $row[$column] !== $value;
+                case '>':
+                    return $row[$column] > $value;
+                case '<':
+                    return $row[$column] < $value;
+                case '>=':
+                    return $row[$column] >= $value;
+                case '<=':
+                    return $row[$column] <= $value;
+                default:
+                    throw new InvalidParamException("Operator '$operator' is not supported.");
+            }
         });
     }
 }

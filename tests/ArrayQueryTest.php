@@ -245,4 +245,63 @@ class ArrayQueryTest extends TestCase
         $this->assertCount(2, $rows);
         $this->assertEquals('username', $query->primaryKeyName);
     }
+
+    public function testGreaterThanCondition()
+    {
+        $query = $this->createArrayQuery();
+        $query->where(['>', 'id', 1]);
+        $rows = $query->all();
+
+        $this->assertCount(2, $rows);
+    }
+
+    public function testLessThanCondition()
+    {
+        $query = $this->createArrayQuery();
+        $query->where(['<', 'id', 2]);
+        $rows = $query->all();
+
+        $this->assertCount(1, $rows);
+        $this->assertEquals(1, $rows[0]['id']);
+    }
+
+    public function testGreaterThanOrEqualToCondition()
+    {
+        $query = $this->createArrayQuery();
+        $query->where(['>=', 'id', 2]);
+        $rows = $query->all();
+
+        $this->assertCount(2, $rows);
+        $this->assertEquals(3, $rows[1]['id']);
+    }
+
+    public function testLessThanOrEqualToCondition()
+    {
+        $query = $this->createArrayQuery();
+        $query->where(['<=', 'id', 2]);
+        $rows = $query->all();
+
+        $this->assertCount(2, $rows);
+    }
+
+    public function testEqualCondition()
+    {
+        $query = $this->createArrayQuery();
+        $query->where(['=', 'id', 1]);
+        $rows = $query->all();
+
+        $this->assertCount(1, $rows);
+        $this->assertEquals(1, $rows[0]['id']);
+    }
+
+    public function testNotEqualCondition()
+    {
+        $query = $this->createArrayQuery();
+        $query->where(['!=', 'id', 1]);
+        $rows = $query->all();
+
+        $this->assertCount(2, $rows);
+        $this->assertEquals(2, $rows[0]['id']);
+        $this->assertEquals(3, $rows[1]['id']);
+    }
 }
