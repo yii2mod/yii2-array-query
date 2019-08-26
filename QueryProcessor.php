@@ -332,7 +332,7 @@ class QueryProcessor extends Component
 
         $values = (array) $values;
 
-        if (count($column) > 1) {
+        if (count((array) $column) > 1) {
             throw new InvalidParamException("Operator '$operator' allows only a single column.");
         }
 
